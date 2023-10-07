@@ -8,8 +8,10 @@ class CoverThumbnail extends StatefulWidget {
   final int thumbnailQuality;
   final double thumbnailScale;
   final BoxFit thumbnailFit;
+  final Widget? permissionWidget;
   const CoverThumbnail(
       {Key? key,
+      this.permissionWidget,
       this.thumbnailQuality = 120,
       this.thumbnailScale = 1.0,
       this.thumbnailFit = BoxFit.cover})
@@ -25,7 +27,9 @@ class _CoverThumbnailState extends State<CoverThumbnail> {
 
   @override
   void initState() {
-    GalleryFunctions.getPermission(setState, provider);
+    if (widget.permissionWidget == null) {
+      GalleryFunctions.getPermission(setState, provider);
+    }
     super.initState();
   }
 
@@ -35,7 +39,8 @@ class _CoverThumbnailState extends State<CoverThumbnail> {
       provider.pickedFile.clear();
       provider.picked.clear();
       provider.pathList.clear();
-      PhotoManager.stopChangeNotify();
+      PhotoManager.stopChangeNotify().catchError((e) {});
+
       super.dispose();
     }
   }
@@ -51,6 +56,21 @@ class _CoverThumbnailState extends State<CoverThumbnail> {
             fit: widget.thumbnailFit,
             filterQuality: FilterQuality.high,
           )
-        : Container();
+        : Container(
+            child: widget.permissionWidget != null
+                ? Container(
+                    height: 45,
+                    width: 45,
+                    color: Colors.transparent,
+                    child: Transform.scale(
+                      scale: 0.7,
+                      child: const Icon(
+                        Icons.priority_high_rounded,
+                        color: Colors.red,
+                      ),
+                    ),
+                  )
+                : SizedBox(),
+          );
   }
 }
