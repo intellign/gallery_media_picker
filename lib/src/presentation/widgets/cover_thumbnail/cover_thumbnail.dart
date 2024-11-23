@@ -27,10 +27,11 @@ class _CoverThumbnailState extends State<CoverThumbnail> {
 
   @override
   void initState() {
-    if (widget.permissionWidget == null) {
+    super.initState();
+    if (widget.permissionWidget == null ||
+        !(widget.permissionWidget is Widget)) {
       GalleryFunctions.getPermission(setState, provider);
     }
-    super.initState();
   }
 
   @override
@@ -47,8 +48,31 @@ class _CoverThumbnailState extends State<CoverThumbnail> {
 
   @override
   Widget build(BuildContext context) {
+    Widget imgIcon({bool loading = false}) {
+      return Container(
+        height: 45,
+        width: 45,
+        color: Colors.transparent,
+        child: Transform.scale(
+          scale: 0.7,
+          child: loading
+              ? CircularProgressIndicator(
+                  strokeWidth: 1.5,
+                  color: Colors.white,
+                )
+              : Icon(
+                  Icons.photo_rounded,
+                  color: Colors.white,
+                ),
+        ),
+      );
+    }
+
     return provider.pathList.isNotEmpty
         ? Image(
+            errorBuilder: (context, error, stackTrace) {
+              return imgIcon();
+            },
             image: DecodeImage(provider.pathList[0],
                 thumbSize: widget.thumbnailQuality,
                 index: 0,
@@ -70,7 +94,7 @@ class _CoverThumbnailState extends State<CoverThumbnail> {
                       ),
                     ),
                   )
-                : SizedBox(),
+                : imgIcon(),
           );
   }
 }
