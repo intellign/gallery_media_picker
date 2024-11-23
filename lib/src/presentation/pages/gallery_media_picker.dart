@@ -79,6 +79,9 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                   child: SelectedPathDropdownButton(
                     provider: provider,
                     mediaPickerParams: widget.mediaPickerParams,
+                    multiSelectFunction: () {
+                      widget.pathList(provider.pickedFile);
+                    },
                   ),
                 ),
               ),
@@ -121,7 +124,11 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                                 ));
 
                                 /// send selected media data
-                                widget.pathList(provider.pickedFile);
+                                if (provider.singlePickMode) {
+                                  widget.pathList(provider.pickedFile);
+                                } else {
+                                  //multi handled in currentPath_selector ....multiSelectFunction
+                                }
                               });
                             },
                           ),
