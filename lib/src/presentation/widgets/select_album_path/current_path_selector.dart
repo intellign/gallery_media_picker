@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'package:gallery_media_picker/src/data/models/gallery_params_model.dart';
 import 'package:gallery_media_picker/src/presentation/pages/gallery_media_picker_controller.dart';
 import 'package:gallery_media_picker/src/presentation/widgets/select_album_path/change_path_widget.dart';
 import 'package:gallery_media_picker/src/presentation/widgets/select_album_path/dropdown.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SelectedPathDropdownButton extends StatelessWidget {
   /// picker provider
@@ -12,8 +15,13 @@ class SelectedPathDropdownButton extends StatelessWidget {
   /// params model
   final MediaPickerParamsModel mediaPickerParams;
 
+  final Function() multiSelectFunction;
+
   const SelectedPathDropdownButton(
-      {Key? key, required this.provider, required this.mediaPickerParams})
+      {Key? key,
+      required this.provider,
+      required this.mediaPickerParams,
+      required this.multiSelectFunction})
       : super(key: key);
 
   @override
@@ -52,10 +60,44 @@ class SelectedPathDropdownButton extends StatelessWidget {
 
           /// top custom widget
           Container(
-            width: MediaQuery.of(context).size.width / 2,
-            alignment: Alignment.bottomLeft,
-            child: mediaPickerParams.appBarLeadingWidget ?? Container(),
-          )
+            width: MediaQuery.of(context).size.width / 2.1,
+            child: provider.singlePickMode
+                ? mediaPickerParams.appBarLeadingWidget ?? Container()
+                : Row(children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width / 3.7,
+                        child: mediaPickerParams.appBarLeadingWidget ??
+                            Container()),
+                    if (!provider.singlePickMode &&
+                        mediaPickerParams.appBarLeadingWidget != null)
+                      VerticalDivider(
+                        color: Colors.grey,
+                        indent: 3,
+                        endIndent: 3,
+                      ),
+                    if (!provider.singlePickMode)
+                      Container(
+                          alignment: Alignment.center,
+                          padding:
+                              const EdgeInsets.only(left: 7, right: 0, top: 7),
+                          child: GestureDetector(
+                              onTap: () {
+                                if (provider.pickedFile.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: '⚠️⚠️',
+                                      gravity: ToastGravity.CENTER);
+                                  HapticFeedback.heavyImpact();
+                                } else {
+                                  multiSelectFunction();
+                                }
+                              },
+                              child: Icon(
+                                Icons.check_circle_rounded,
+                                size: 30,
+                                color: Colors.blue,
+                              ))),
+                  ]),
+          ),
         ],
       ),
     );
@@ -93,7 +135,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
           children: [
             /// current album name
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.28,
+              // width: MediaQuery.of(context).size.width * 0.28,
               child: Text(
                 provider.currentAlbum!.name,
                 overflow: TextOverflow.ellipsis,
@@ -104,11 +146,11 @@ class SelectedPathDropdownButton extends StatelessWidget {
                     fontWeight: FontWeight.w500),
               ),
             ),
-            const Spacer(),
+            // const Spacer(),
 
             /// animated arrow icon
             Padding(
-              padding: const EdgeInsets.only(right: 5),
+              padding: const EdgeInsets.only(right: 5, left: 5, top: 2),
               child: AnimatedBuilder(
                 animation: arrowDownNotifier,
                 builder: (BuildContext context, child) {
@@ -120,7 +162,8 @@ class SelectedPathDropdownButton extends StatelessWidget {
                 },
                 child: Icon(
                   Icons.keyboard_arrow_down,
-                  color: mediaPickerParams.appBarIconColor,
+                  color: mediaPickerParams.appBarIconColor ??
+                      mediaPickerParams.appBarTextColor,
                 ),
               ),
             ),
