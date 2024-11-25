@@ -5,6 +5,7 @@ import 'package:gallery_media_picker/src/data/models/gallery_params_model.dart';
 import 'package:gallery_media_picker/src/presentation/pages/gallery_media_picker_controller.dart';
 import 'package:gallery_media_picker/src/presentation/widgets/select_album_path/change_path_widget.dart';
 import 'package:gallery_media_picker/src/presentation/widgets/select_album_path/dropdown.dart';
+import 'package:stories_editor/src/domain/providers/notifiers/control_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
