@@ -9,12 +9,14 @@ class CoverThumbnail extends StatefulWidget {
   final double thumbnailScale;
   final BoxFit thumbnailFit;
   final Widget? permissionWidget;
+  final int viewIndex;
   const CoverThumbnail(
       {Key? key,
       this.permissionWidget,
       this.thumbnailQuality = 120,
       this.thumbnailScale = 1.0,
-      this.thumbnailFit = BoxFit.cover})
+      this.thumbnailFit = BoxFit.cover,
+      required this.viewIndex})
       : super(key: key);
 
   @override
@@ -28,8 +30,9 @@ class _CoverThumbnailState extends State<CoverThumbnail> {
   @override
   void initState() {
     super.initState();
-    if (widget.permissionWidget == null ||
-        !(widget.permissionWidget is Widget)) {
+    if (widget.viewIndex != 1 &&
+        (widget.permissionWidget == null ||
+            !(widget.permissionWidget is Widget))) {
       GalleryFunctions.getPermission(setState, provider);
     }
   }
