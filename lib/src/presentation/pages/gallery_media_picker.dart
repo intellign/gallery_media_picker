@@ -17,10 +17,13 @@ class GalleryMediaPicker extends StatefulWidget {
   /// return all selected paths
   final Function(List<PickedAssetModel> path) pathList;
 
+  final bool multiForNow;
+
   const GalleryMediaPicker({
     Key? key,
     required this.mediaPickerParams,
     required this.pathList,
+    required this.multiForNow,
   }) : super(key: key);
 
   @override
@@ -124,7 +127,8 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                                 ));
 
                                 /// send selected media data
-                                if (provider.singlePickMode) {
+                                if (provider.singlePickMode &&
+                                    !widget.multiForNow) {
                                   widget.pathList(provider.pickedFile);
                                 } else {
                                   //multi handled in currentPath_selector ....multiSelectFunction
