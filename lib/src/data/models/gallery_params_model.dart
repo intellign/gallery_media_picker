@@ -12,7 +12,7 @@ class MediaPickerParamsModel {
       this.appBarTextColor = Colors.white,
       this.crossAxisCount = 3,
       this.gridViewBackgroundColor = Colors.black54,
-      this.childAspectRatio = 0.5,
+      this.childAspectRatio = 1.0, //0.5 = rectangle
       this.appBarLeadingWidget,
       this.appBarHeight = 100,
       this.imageBackgroundColor = Colors.white,
