@@ -123,7 +123,8 @@ class GalleryGridViewState extends State<GalleryGridView> {
             return Container(
               width: double.infinity,
               height: double.infinity,
-              color: widget.provider.paramsModel.gridViewBackgroundColor,
+              color: widget.provider.paramsModel
+                  .imageBackgroundColor, //.gridViewBackgroundColor
             );
           }
           final asset = snapshot.data![0];
