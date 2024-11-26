@@ -91,9 +91,11 @@ class GalleryFunctions {
         .then((pathList) {
       /// don't delete setState
       Future.delayed(Duration.zero, () {
-        setState(() {
-          provider.resetPathList(pathList);
-        });
+        provider.resetPathList(pathList);
+
+        if (setState != null) {
+          setState(() {});
+        }
       });
     });
   }
