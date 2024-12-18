@@ -77,6 +77,8 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
               Center(
                 child: Container(
                   color: widget.mediaPickerParams.appBarColor,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(23)),
                   alignment: Alignment.bottomLeft,
                   height: widget.mediaPickerParams.appBarHeight,
                   child: SelectedPathDropdownButton(
