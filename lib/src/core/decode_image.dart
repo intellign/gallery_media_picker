@@ -35,7 +35,7 @@ class DecodeImage extends ImageProvider<DecodeImage> {
     final bytes = await coverEntity
         .thumbnailDataWithSize(ThumbnailSize(thumbSize, thumbSize));
 
-    return decode(await ImmutableBuffer.fromUint8List(bytes!));
+    return decode(await ui.ImmutableBuffer.fromUint8List(bytes!));
   }
 
   @override
