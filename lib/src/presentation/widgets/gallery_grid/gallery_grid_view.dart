@@ -35,6 +35,7 @@ class GalleryGridViewState extends State<GalleryGridView> {
 
   /// create cache for images
   var cacheMap = _createMap();
+  final Map<int, Future<List<AssetEntity>>> _pendingAssets = {};
 
   /// notifier for scroll events
   final scrolling = ValueNotifier(false);
@@ -92,9 +93,6 @@ class GalleryGridViewState extends State<GalleryGridView> {
         if (asset != null &&
             asset.type != AssetType.audio &&
             asset.type != AssetType.other) {
-          asset = (await widget.path!
-              .getAssetListRange(start: index, end: index + 1))[0];
-          cacheMap[index] = asset;
           widget.onAssetItemClick?.call(asset, index);
         }
       },
@@ -117,7 +115,8 @@ class GalleryGridViewState extends State<GalleryGridView> {
     } else {
       /// read the assets from selected album
       return FutureBuilder<List<AssetEntity>>(
-        future: widget.path!.getAssetListRange(start: index, end: index + 1),
+        future: _pendingAssets.putIfAbsent(index,
+            () => widget.path!.getAssetListRange(start: index, end: index + 1)),
         builder: (ctx, snapshot) {
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Container(
@@ -157,6 +156,7 @@ class GalleryGridViewState extends State<GalleryGridView> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.path != widget.path) {
       cacheMap.clear();
+      _pendingAssets.clear();
       scrolling.value = false;
       if (mounted) {
         setState(() {});
