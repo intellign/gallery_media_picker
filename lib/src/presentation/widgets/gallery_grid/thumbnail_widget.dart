@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:gallery_media_picker/src/core/decode_image.dart';
 import 'package:gallery_media_picker/src/presentation/pages/gallery_media_picker_controller.dart';
 import 'package:photo_manager/photo_manager.dart';
 
@@ -35,28 +34,35 @@ class ThumbnailWidget extends StatelessWidget {
         /// thumbnail image
         if (asset.type == AssetType.image || asset.type == AssetType.video)
           FutureBuilder<Uint8List?>(
-            future: asset.thumbnailData,
-            builder: (_, data) {
-              if (data.hasData) {
-                return SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Image(
-                    image: DecodeImage(
-                        provider.pathList[
-                            provider.pathList.indexOf(provider.currentAlbum!)],
-                        thumbSize: provider.paramsModel.thumbnailQuality,
-                        index: index),
-                    gaplessPlayback: true,
-                    fit: provider.paramsModel.thumbnailBoxFix,
-                    filterQuality: FilterQuality.high,
-                  ),
-                );
-              } else {
-                return Container(
-                  color: provider.paramsModel.imageBackgroundColor,
+            // Render the actual bytes returned by PhotoManager. The previous
+            // implementation fetched a thumbnail and then ignored it, starting
+            // a second asset lookup through a custom ImageProvider.
+            future: asset.thumbnailDataWithSize(
+              ThumbnailSize(
+                provider.paramsModel.thumbnailQuality,
+                provider.paramsModel.thumbnailQuality,
+              ),
+            ),
+            builder: (context, snapshot) {
+              final bytes = snapshot.data;
+              if (bytes == null || bytes.isEmpty) {
+                return const Center(
+                  child: Icon(Icons.photo_outlined,
+                      color: Colors.white38, size: 22),
                 );
               }
+              return SizedBox.expand(
+                child: Image.memory(
+                  bytes,
+                  fit: provider.paramsModel.thumbnailBoxFix,
+                  gaplessPlayback: true,
+                  filterQuality: FilterQuality.medium,
+                  errorBuilder: (_, __, ___) => const Center(
+                    child: Icon(Icons.broken_image_outlined,
+                        color: Colors.white54),
+                  ),
+                ),
+              );
             },
           ),
 
