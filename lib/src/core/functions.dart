@@ -65,7 +65,6 @@ class GalleryFunctions {
             iosAccessLevel: IosAccessLevel.readWrite));
     if (result.isAuth) {
       /// load "recent" album
-      provider.setAssetCount();
       PhotoManager.startChangeNotify();
       PhotoManager.addChangeCallback((value) {
         _refreshPathList(setState, provider);
@@ -87,11 +86,12 @@ class GalleryFunctions {
                 ? RequestType.video
                 : provider.paramsModel.onlyImages
                     ? RequestType.image
-                    : RequestType.image)
+                    : RequestType.common)
         .then((pathList) {
       /// don't delete setState
       Future.delayed(Duration.zero, () {
         provider.resetPathList(pathList);
+        provider.setAssetCount();
 
         if (setState != null) {
           setState(() {});
